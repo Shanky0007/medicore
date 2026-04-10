@@ -1,0 +1,203 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Modal from '@/components/ui/Modal';
+import Button from '@/components/ui/Button';
+import styles from '@/styles/ui.module.css';
+
+interface AppointmentFormData {
+  patient: string;
+  doctor: string;
+  department: string;
+  dateTime: string;
+  duration: number;
+  reason: string;
+  status: string;
+  notes: string;
+}
+
+const emptyForm: AppointmentFormData = {
+  patient: '', doctor: '', department: '', dateTime: '',
+  duration: 30, reason: '', status: 'scheduled', notes: '',
+};
+
+const departments = [
+  'Cardiology', 'Gynecology', 'Pediatrics', 'Neurology', 'Surgery',
+  'Ophthalmology', 'Dermatology', 'Emergency', 'General Medicine', 'Orthopedics',
+];
+
+const statuses = [
+  { value: 'scheduled', label: 'Scheduled' },
+  { value: 'confirmed', label: 'Confirmed' },
+  { value: 'in-preparation', label: 'In Preparation' },
+  { value: 'in-progress', label: 'In Progress' },
+  { value: 'completed', label: 'Completed' },
+  { value: 'cancelled', label: 'Cancelled' },
+  { value: 'no-show', label: 'No Show' },
+];
+
+interface PatientOption { _id: string; firstName: string; lastName: string; patientId: string; }
+interface DoctorOption { _id: string; firstName: string; lastName: string; }
+
+interface Props {
+  open: boolean;
+  onClose: () => void;
+  onSaved: () => void;
+  editData?: (AppointmentFormData & { _id: string }) | null;
+}
+
+export default function AppointmentFormModal({ open, onClose, onSaved, editData }: Props) {
+  const [form, setForm] = useState<AppointmentFormData>(emptyForm);
+  const [patients, setPatients] = useState<PatientOption[]>([]);
+  const [doctors, setDoctors] = useState<DoctorOption[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (!open) return;
+    // Fetch patients and doctors for dropdowns
+    fetch('/api/patients?limit=200').then(r => r.json()).then(j => {
+      if (j.success) setPatients(j.data);
+    });
+    fetch('/api/settings/users?role=doctor&limit=50').then(r => r.json()).then(j => {
+      if (j.success) setDoctors(j.data);
+    }).catch(() => {
+      // Users API may not exist yet, use empty
+    });
+  }, [open]);
+
+  useEffect(() => {
+    if (editData) {
+      setForm({
+        patient: typeof editData.patient === 'object' ? (editData.patient as unknown as PatientOption)._id : editData.patient,
+        doctor: typeof editData.doctor === 'object' ? (editData.doctor as unknown as DoctorOption)._id : editData.doctor,
+        department: editData.department,
+        dateTime: editData.dateTime?.slice(0, 16) || '',
+        duration: editData.duration,
+        reason: editData.reason,
+        status: editData.status,
+        notes: editData.notes,
+      });
+    } else {
+      setForm(emptyForm);
+    }
+    setError('');
+  }, [editData, open]);
+
+  const set = (field: string, value: string | number) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.patient || !form.department || !form.dateTime) {
+      setError('Patient, department, and date/time are required.');
+      return;
+    }
+    setSaving(true);
+    setError('');
+
+    const url = editData ? `/api/appointments/${editData._id}` : '/api/appointments';
+    const method = editData ? 'PUT' : 'POST';
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...form,
+          doctor: form.doctor || undefined,
+        }),
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.message || 'Failed to save');
+      onSaved();
+      onClose();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <Modal title={editData ? 'Edit Appointment' : 'New Appointment'} onClose={onClose}>
+      {error && (
+        <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: 'var(--red)', padding: '10px 14px', borderRadius: 'var(--radius-sm)', fontSize: '12.5px', marginBottom: '16px' }}>
+          {error}
+        </div>
+      )}
+      <form onSubmit={handleSubmit}>
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}>Patient *</label>
+          <select className={styles.formSelect} value={form.patient} onChange={(e) => set('patient', e.target.value)} required>
+            <option value="">Select patient...</option>
+            {patients.map((p) => (
+              <option key={p._id} value={p._id}>{p.firstName} {p.lastName} ({p.patientId})</option>
+            ))}
+          </select>
+        </div>
+
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Department *</label>
+            <select className={styles.formSelect} value={form.department} onChange={(e) => set('department', e.target.value)} required>
+              <option value="">Select department...</option>
+              {departments.map((d) => (
+                <option key={d} value={d}>{d}</option>
+              ))}
+            </select>
+          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Doctor</label>
+            <select className={styles.formSelect} value={form.doctor} onChange={(e) => set('doctor', e.target.value)}>
+              <option value="">Select doctor...</option>
+              {doctors.map((d) => (
+                <option key={d._id} value={d._id}>Dr. {d.firstName} {d.lastName}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className={styles.formRow}>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Date & Time *</label>
+            <input className={styles.formInput} type="datetime-local" value={form.dateTime} onChange={(e) => set('dateTime', e.target.value)} required />
+          </div>
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Duration (min)</label>
+            <input className={styles.formInput} type="number" min="5" max="480" value={form.duration} onChange={(e) => set('duration', parseInt(e.target.value) || 30)} />
+          </div>
+        </div>
+
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}>Reason</label>
+          <input className={styles.formInput} value={form.reason} onChange={(e) => set('reason', e.target.value)} placeholder="e.g., Follow-up, Check-up..." />
+        </div>
+
+        {editData && (
+          <div className={styles.formGroup}>
+            <label className={styles.formLabel}>Status</label>
+            <select className={styles.formSelect} value={form.status} onChange={(e) => set('status', e.target.value)}>
+              {statuses.map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        <div className={styles.formGroup}>
+          <label className={styles.formLabel}>Notes</label>
+          <textarea className={styles.formTextarea} value={form.notes} onChange={(e) => set('notes', e.target.value)} placeholder="Additional notes..." />
+        </div>
+
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', marginTop: '20px' }}>
+          <Button variant="secondary" type="button" onClick={onClose}>Cancel</Button>
+          <Button type="submit" disabled={saving}>{saving ? 'Saving...' : editData ? 'Update' : 'Create Appointment'}</Button>
+        </div>
+      </form>
+    </Modal>
+  );
+}

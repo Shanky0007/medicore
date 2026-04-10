@@ -1,0 +1,23 @@
+.header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+.headerLeft h1 { font-family: var(--serif); font-size: 22px; font-weight: 400; margin-bottom: 4px; }
+.headerLeft p { font-size: 13px; color: var(--muted); }
+.controls { display: flex; gap: 12px; margin-bottom: 20px; align-items: center; flex-wrap: wrap; }
+.searchInput { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); padding: 8px 14px; font-size: 13px; width: 280px; }
+.searchInput:focus { border-color: var(--accent); outline: none; }
+.filterSelect { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius-sm); color: var(--text); padding: 8px 14px; font-size: 13px; appearance: none; cursor: pointer; }
+.filterSelect:focus { border-color: var(--accent); outline: none; }
+
+.stockIndicator { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; }
+.stockDot { width: 8px; height: 8px; border-radius: 50%; }
+.stockDotGreen { background: var(--green); }
+.stockDotAmber { background: var(--amber); }
+.stockDotRed { background: var(--red); }
+
+.qtyCell { font-weight: 500; }
+.qtyLow { color: var(--amber); }
+.qtyOut { color: var(--red); }
+
+@media (max-width: 1100px) {
+  .controls { flex-direction: column; align-items: stretch; }
+  .searchInput { width: 100%; }
+}

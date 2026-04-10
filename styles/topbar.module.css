@@ -1,0 +1,99 @@
+.topbar {
+  height: 60px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 28px;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.topbarTitle {
+  font-size: 15px;
+  font-weight: 500;
+  flex: 1;
+}
+
+/* ── Search ── */
+.searchWrap {
+  position: relative;
+}
+
+.searchInput {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  padding: 7px 12px 7px 34px;
+  font-size: 13px;
+  width: 220px;
+}
+
+.searchInput:focus {
+  border-color: var(--accent);
+}
+
+.searchIcon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Icon buttons ── */
+.topbarBtns {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.iconBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.15s;
+}
+
+.iconBtn:hover {
+  color: var(--text);
+  border-color: var(--border2);
+}
+
+.iconBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.notifDot {
+  position: relative;
+}
+
+.notifDot::after {
+  content: '';
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  width: 6px;
+  height: 6px;
+  background: var(--red);
+  border-radius: 50%;
+  border: 1.5px solid var(--bg2);
+}

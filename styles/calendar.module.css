@@ -1,0 +1,209 @@
+.calendarWrap {
+  margin-top: 20px;
+}
+
+.viewToggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.viewBtn {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  cursor: pointer;
+  color: var(--muted);
+  transition: all 0.15s;
+  border: none;
+  background: none;
+  font-family: var(--font);
+}
+
+.viewBtn:hover {
+  color: var(--text);
+}
+
+.viewBtn.active {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ── Override react-big-calendar defaults for dark theme ── */
+.calendarContainer :global(.rbc-calendar) {
+  font-family: var(--font);
+  color: var(--text);
+  min-height: 600px;
+}
+
+.calendarContainer :global(.rbc-toolbar) {
+  margin-bottom: 16px;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.calendarContainer :global(.rbc-toolbar button) {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-sm);
+  color: var(--muted);
+  padding: 6px 12px;
+  font-size: 12.5px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+
+.calendarContainer :global(.rbc-toolbar button:hover) {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.calendarContainer :global(.rbc-toolbar button.rbc-active) {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.calendarContainer :global(.rbc-toolbar-label) {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.calendarContainer :global(.rbc-header) {
+  background: var(--bg3);
+  border-color: var(--border) !important;
+  padding: 8px 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.calendarContainer :global(.rbc-month-view),
+.calendarContainer :global(.rbc-time-view) {
+  border-color: var(--border) !important;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.calendarContainer :global(.rbc-day-bg) {
+  background: var(--card);
+  border-color: var(--border) !important;
+}
+
+.calendarContainer :global(.rbc-day-bg.rbc-today) {
+  background: rgba(59, 130, 246, 0.06);
+}
+
+.calendarContainer :global(.rbc-off-range-bg) {
+  background: var(--bg2);
+}
+
+.calendarContainer :global(.rbc-date-cell) {
+  padding: 4px 8px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.calendarContainer :global(.rbc-date-cell.rbc-now) {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.calendarContainer :global(.rbc-event) {
+  background: var(--accent);
+  border: none;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.calendarContainer :global(.rbc-event.rbc-selected) {
+  background: #2563EB;
+}
+
+/* Status-based event colors via custom class names */
+.calendarContainer :global(.event-scheduled) {
+  background: var(--purple);
+}
+
+.calendarContainer :global(.event-confirmed) {
+  background: var(--amber);
+}
+
+.calendarContainer :global(.event-in-preparation) {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+.calendarContainer :global(.event-in-progress) {
+  background: var(--accent);
+}
+
+.calendarContainer :global(.event-completed) {
+  background: var(--green);
+}
+
+.calendarContainer :global(.event-cancelled) {
+  background: var(--red);
+  opacity: 0.5;
+}
+
+.calendarContainer :global(.event-no-show) {
+  background: var(--red);
+  opacity: 0.7;
+}
+
+.calendarContainer :global(.rbc-month-row) {
+  border-color: var(--border) !important;
+}
+
+.calendarContainer :global(.rbc-show-more) {
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 500;
+  background: transparent;
+}
+
+/* Time view */
+.calendarContainer :global(.rbc-time-content) {
+  border-color: var(--border) !important;
+}
+
+.calendarContainer :global(.rbc-time-header-content) {
+  border-color: var(--border) !important;
+}
+
+.calendarContainer :global(.rbc-timeslot-group) {
+  border-color: var(--border) !important;
+}
+
+.calendarContainer :global(.rbc-time-slot) {
+  border-color: var(--border) !important;
+}
+
+.calendarContainer :global(.rbc-label) {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.calendarContainer :global(.rbc-current-time-indicator) {
+  background: var(--red);
+  height: 2px;
+}
+
+.calendarContainer :global(.rbc-allday-cell) {
+  display: none;
+}
+
+.calendarContainer :global(.rbc-time-header.rbc-overflowing) {
+  border-color: var(--border) !important;
+}
+
+.calendarContainer :global(.rbc-day-slot .rbc-time-slot) {
+  border-color: var(--border) !important;
+}

@@ -6,24 +6,30 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed": "npx tsx --env-file=.env.local scripts/seed.ts",
+    "seed:dashboard": "npx tsx --env-file=.env.local scripts/seed-dashboard.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "date-fns": "^4.1.0",
     "lucide-react": "^1.8.0",
-    "mongoose": "^9.4.1",
+    "mongoose": "^8.23.0",
     "next": "16.2.3",
     "next-auth": "^4.24.13",
     "react": "19.2.4",
+    "react-big-calendar": "^1.19.4",
     "react-dom": "19.2.4",
     "recharts": "^3.8.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
+    "@types/react-big-calendar": "^1.16.3",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.2.3",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
