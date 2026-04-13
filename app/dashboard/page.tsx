@@ -197,7 +197,7 @@ export default function DashboardPage() {
       </div>
 
       {/* ── Doctor: Incoming Patients with Intake Data ── */}
-      {session?.user?.role === 'doctor' && (data?.waitingRoom || []).some((apt: Record<string, unknown>) => apt.intake) && (
+      {session?.user?.role === 'doctor' && (
         <Card style={{ marginBottom: '20px' }}>
           <CardHeader title="Incoming Patients — Intake Data from Reception" right={
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--green)' }}>
@@ -238,6 +238,14 @@ export default function DashboardPage() {
               </div>
             );
           })}
+          {(data?.waitingRoom || []).filter((apt: Record<string, unknown>) => {
+            const intake = apt.intake as { vitals?: { weight?: string; bloodPressure?: string } } | null;
+            return intake?.vitals?.weight || intake?.vitals?.bloodPressure;
+          }).length === 0 && (
+            <div style={{ textAlign: 'center', padding: '24px', color: 'var(--muted)', fontSize: '13px' }}>
+              No incoming patients with intake data yet. Waiting for reception to complete initial consultations.
+            </div>
+          )}
         </Card>
       )}
 

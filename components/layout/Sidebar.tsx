@@ -25,33 +25,35 @@ interface NavItem {
   icon: React.ReactNode;
   badge?: string;
   badgeColor?: 'blue' | 'green' | 'amber';
+  roles?: string[]; // if set, only these roles see this item
 }
 
+// Role-based visibility for each nav item
 function buildNavSections(counts: { patients: number; appointmentsToday: number; labPending: number }): { label: string; items: NavItem[] }[] {
   return [
     {
       label: 'Main',
       items: [
         { label: 'Dashboard', href: '/dashboard', icon: <LayoutDashboard size={16} /> },
-        { label: 'Patients', href: '/patients', icon: <Users size={16} />, badge: counts.patients > 0 ? String(counts.patients) : undefined },
+        { label: 'Patients', href: '/patients', icon: <Users size={16} />, badge: counts.patients > 0 ? String(counts.patients) : undefined, roles: ['admin', 'doctor'] },
         { label: 'Appointments', href: '/appointments', icon: <CalendarDays size={16} />, badge: counts.appointmentsToday > 0 ? String(counts.appointmentsToday) : undefined, badgeColor: 'amber' },
-        { label: 'DME / DSE', href: '/records', icon: <FileText size={16} /> },
+        { label: 'DME / DSE', href: '/records', icon: <FileText size={16} />, roles: ['admin', 'doctor'] },
       ],
     },
     {
       label: 'Clinic',
       items: [
-        { label: 'Laboratory (LIS)', href: '/lab', icon: <FlaskConical size={16} />, badge: counts.labPending > 0 ? String(counts.labPending) : undefined, badgeColor: 'green' },
-        { label: 'Imaging (PACS)', href: '/imaging', icon: <Search size={16} /> },
-        { label: 'Pharmacy', href: '/pharmacy', icon: <Home size={16} /> },
+        { label: 'Laboratory (LIS)', href: '/lab', icon: <FlaskConical size={16} />, badge: counts.labPending > 0 ? String(counts.labPending) : undefined, badgeColor: 'green', roles: ['admin', 'doctor', 'lab-tech'] },
+        { label: 'Imaging (PACS)', href: '/imaging', icon: <Search size={16} />, roles: ['admin', 'doctor'] },
+        { label: 'Pharmacy', href: '/pharmacy', icon: <Home size={16} />, roles: ['admin', 'pharmacist'] },
       ],
     },
     {
       label: 'Management',
       items: [
-        { label: 'Billing & Cash', href: '/billing', icon: <DollarSign size={16} /> },
-        { label: 'Reporting & Stats', href: '/reports', icon: <Activity size={16} /> },
-        { label: 'Settings', href: '/settings', icon: <Settings size={16} /> },
+        { label: 'Billing & Cash', href: '/billing', icon: <DollarSign size={16} />, roles: ['admin', 'billing'] },
+        { label: 'Reporting & Stats', href: '/reports', icon: <Activity size={16} />, roles: ['admin', 'billing', 'doctor'] },
+        { label: 'Settings', href: '/settings', icon: <Settings size={16} />, roles: ['admin'] },
       ],
     },
   ];
@@ -100,10 +102,17 @@ export default function Sidebar() {
 
       {/* Navigation */}
       <nav className={styles.nav}>
-        {navSections.map((section) => (
+        {navSections.map((section) => {
+          const userRole = session?.user?.role || '';
+          const visibleItems = section.items.filter(
+            (item) => !item.roles || item.roles.includes(userRole)
+          );
+          if (visibleItems.length === 0) return null;
+
+          return (
           <div key={section.label} className={styles.navSection}>
             <div className={styles.navLabel}>{section.label}</div>
-            {section.items.map((item) => {
+            {visibleItems.map((item) => {
               const isActive =
                 item.href === '/dashboard'
                   ? pathname === '/dashboard'
@@ -134,7 +143,8 @@ export default function Sidebar() {
               );
             })}
           </div>
-        ))}
+          );
+        })}
       </nav>
 
       {/* Footer — User Card */}

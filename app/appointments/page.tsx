@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState, useCallback, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import { Calendar, dateFnsLocalizer, View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { enUS } from 'date-fns/locale/en-US';
@@ -38,6 +39,7 @@ const avatarColors = [
 ];
 
 export default function AppointmentsPage() {
+  const router = useRouter();
   const [appointments, setAppointments] = useState<AppointmentRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -245,9 +247,7 @@ export default function AppointmentsPage() {
               total={total}
               onPageChange={setPage}
               onRowClick={(row) => {
-                const apt = row as unknown as AppointmentRow;
-                setEditApt(apt);
-                setModalOpen(true);
+                router.push(`/appointments/${(row as unknown as AppointmentRow)._id}`);
               }}
             />
           )}

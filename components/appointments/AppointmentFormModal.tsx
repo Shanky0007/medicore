@@ -66,8 +66,39 @@ export default function AppointmentFormModal({ open, onClose, onSaved, editData 
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  const [showQuickRegister, setShowQuickRegister] = useState(false);
+  const [quickPatient, setQuickPatient] = useState({ firstName: '', lastName: '', dateOfBirth: '', gender: 'male', phone: '' });
+  const [registeringPatient, setRegisteringPatient] = useState(false);
+
+  const handleQuickRegister = async () => {
+    if (!quickPatient.firstName || !quickPatient.lastName || !quickPatient.dateOfBirth) {
+      setError('First name, last name, and date of birth are required.');
+      return;
+    }
+    setRegisteringPatient(true);
+    try {
+      const res = await fetch('/api/patients', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(quickPatient),
+      });
+      const json = await res.json();
+      if (!json.success) throw new Error(json.message);
+      // Add to patients list and select
+      setPatients(prev => [...prev, json.data]);
+      set('patient', json.data._id);
+      setShowQuickRegister(false);
+      setQuickPatient({ firstName: '', lastName: '', dateOfBirth: '', gender: 'male', phone: '' });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to register patient');
+    } finally {
+      setRegisteringPatient(false);
+    }
+  };
+
   useEffect(() => {
     if (!open) return;
+    setShowQuickRegister(false);
     // Fetch patients and doctors for dropdowns
     fetch('/api/patients?limit=200').then(r => r.json()).then(j => {
       if (j.success) setPatients(j.data);
@@ -145,13 +176,44 @@ export default function AppointmentFormModal({ open, onClose, onSaved, editData 
       )}
       <form onSubmit={handleSubmit}>
         <div className={styles.formGroup}>
-          <label className={styles.formLabel}>Patient *</label>
-          <select className={styles.formSelect} value={form.patient} onChange={(e) => set('patient', e.target.value)} required>
-            <option value="">Select patient...</option>
-            {patients.map((p) => (
-              <option key={p._id} value={p._id}>{p.firstName} {p.lastName} ({p.patientId})</option>
-            ))}
-          </select>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <label className={styles.formLabel}>Patient *</label>
+            {!showQuickRegister && !editData && (
+              <button type="button" onClick={() => setShowQuickRegister(true)} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontSize: '12px' }}>
+                + New Patient
+              </button>
+            )}
+          </div>
+          {showQuickRegister ? (
+            <div style={{ background: 'var(--bg3)', borderRadius: 'var(--radius-sm)', padding: '14px', marginBottom: '8px' }}>
+              <div style={{ fontSize: '12px', color: 'var(--muted)', marginBottom: '10px', display: 'flex', justifyContent: 'space-between' }}>
+                <span>Quick Patient Registration</span>
+                <button type="button" onClick={() => setShowQuickRegister(false)} style={{ background: 'none', border: 'none', color: 'var(--muted)', cursor: 'pointer', fontSize: '12px' }}>Cancel</button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                <input className={styles.formInput} placeholder="First name *" value={quickPatient.firstName} onChange={(e) => setQuickPatient(p => ({ ...p, firstName: e.target.value }))} />
+                <input className={styles.formInput} placeholder="Last name *" value={quickPatient.lastName} onChange={(e) => setQuickPatient(p => ({ ...p, lastName: e.target.value }))} />
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '8px' }}>
+                <input className={styles.formInput} type="date" value={quickPatient.dateOfBirth} onChange={(e) => setQuickPatient(p => ({ ...p, dateOfBirth: e.target.value }))} title="Date of birth *" />
+                <select className={styles.formSelect} value={quickPatient.gender} onChange={(e) => setQuickPatient(p => ({ ...p, gender: e.target.value }))}>
+                  <option value="male">Male</option><option value="female">Female</option>
+                </select>
+              </div>
+              <input className={styles.formInput} placeholder="Phone" value={quickPatient.phone} onChange={(e) => setQuickPatient(p => ({ ...p, phone: e.target.value }))} style={{ marginBottom: '8px' }} />
+              <button type="button" onClick={handleQuickRegister} disabled={registeringPatient}
+                style={{ background: 'var(--accent)', color: 'white', border: 'none', borderRadius: 'var(--radius-sm)', padding: '7px 14px', fontSize: '12.5px', cursor: 'pointer', fontFamily: 'var(--font)', width: '100%' }}>
+                {registeringPatient ? 'Registering...' : 'Register & Select'}
+              </button>
+            </div>
+          ) : (
+            <select className={styles.formSelect} value={form.patient} onChange={(e) => set('patient', e.target.value)} required>
+              <option value="">Select patient...</option>
+              {patients.map((p) => (
+                <option key={p._id} value={p._id}>{p.firstName} {p.lastName} ({p.patientId})</option>
+              ))}
+            </select>
+          )}
         </div>
 
         <div className={styles.formRow}>

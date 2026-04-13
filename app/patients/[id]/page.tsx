@@ -130,6 +130,11 @@ export default function PatientProfilePage() {
             <span>{p.gender === 'male' ? 'Male' : 'Female'}, {age} yrs</span>
             <StatusBadge status={p.status} />
             <StatusBadge status={p.category} />
+            {!isAdmin && (
+              <span style={{ background: 'rgba(245,158,11,0.12)', color: 'var(--amber)', padding: '2px 10px', borderRadius: '10px', fontSize: '10.5px', fontWeight: 500 }}>
+                Read-only
+              </span>
+            )}
           </div>
         </div>
         <div className={s.profileActions}>
