@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import {
   Users, CalendarDays, FileText, FlaskConical, Search as SearchIcon,
-  Home, DollarSign, Activity, Shield, ArrowRight, Zap,
+  Home, DollarSign, Activity, Shield, ArrowRight, Zap, Clock, Stethoscope,
 } from 'lucide-react';
 import s from '@/styles/landing.module.css';
 
@@ -90,6 +90,41 @@ export default function LandingPage() {
               <div className={s.featureDesc}>{f.desc}</div>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* ── Role Access Section ── */}
+      <section className={s.roleAccess}>
+        <h2 className={s.featuresTitle}>Sign In to Your Role</h2>
+        <p className={s.featuresSubtitle}>Three dedicated dashboards — each tailored to your responsibilities</p>
+
+        <div className={s.roleCards}>
+          <Link href="/login?role=reception" className={s.roleAccessCard} style={{ borderColor: 'rgba(6,182,212,0.2)' }}>
+            <div className={s.roleAccessIcon} style={{ background: 'rgba(6,182,212,0.12)', color: 'var(--accent2)' }}>
+              <Clock size={26} />
+            </div>
+            <div className={s.roleAccessLabel}>Reception</div>
+            <div className={s.roleAccessDesc}>Book appointments, register patients, take vitals, manage billing</div>
+            <div className={s.roleAccessBtn} style={{ color: 'var(--accent2)' }}>Log in as Reception <ArrowRight size={14} /></div>
+          </Link>
+
+          <Link href="/login?role=doctor" className={s.roleAccessCard} style={{ borderColor: 'rgba(139,92,246,0.2)' }}>
+            <div className={s.roleAccessIcon} style={{ background: 'rgba(139,92,246,0.12)', color: 'var(--purple)' }}>
+              <Stethoscope size={26} />
+            </div>
+            <div className={s.roleAccessLabel}>Doctor</div>
+            <div className={s.roleAccessDesc}>Review intake data, diagnose patients, create medical records</div>
+            <div className={s.roleAccessBtn} style={{ color: 'var(--purple)' }}>Log in as Doctor <ArrowRight size={14} /></div>
+          </Link>
+
+          <Link href="/login?role=admin" className={s.roleAccessCard} style={{ borderColor: 'rgba(59,130,246,0.2)' }}>
+            <div className={s.roleAccessIcon} style={{ background: 'rgba(59,130,246,0.12)', color: 'var(--accent)' }}>
+              <Shield size={26} />
+            </div>
+            <div className={s.roleAccessLabel}>Administrator</div>
+            <div className={s.roleAccessDesc}>Full control — manage users, doctors, hospitals, and view analytics</div>
+            <div className={s.roleAccessBtn} style={{ color: 'var(--accent)' }}>Log in as Admin <ArrowRight size={14} /></div>
+          </Link>
         </div>
       </section>
 
