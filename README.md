@@ -61,8 +61,6 @@ npm run reset
 npm run dev
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser
-
 ## 🔐 Default Login Credentials
 
 After running `npm run reset`, use these credentials:
