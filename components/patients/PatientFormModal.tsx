@@ -31,7 +31,10 @@ interface Props {
   open: boolean;
   onClose: () => void;
   onSaved: () => void;
-  editData?: (PatientFormData & { _id: string }) | null;
+  editData?: (Omit<PatientFormData, 'hospital'> & {
+    _id: string;
+    hospital?: string | { _id: string; name: string } | null;
+  }) | null;
 }
 
 export default function PatientFormModal({ open, onClose, onSaved, editData }: Props) {

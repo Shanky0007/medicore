@@ -23,6 +23,7 @@ interface PatientDetail {
   phone: string;
   email: string;
   category: string;
+  hospital: string;
   status: string;
   createdAt: string;
   address: { street: string; city: string; region: string; postalCode: string };
